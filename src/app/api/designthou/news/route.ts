@@ -1,25 +1,16 @@
-import axios from 'axios'
-import { NextResponse } from 'next/server'
-// import { connectDB } from '@/lib/mongoose'
-// import User from '@/models/user'
-
-// interface MongoError extends Error {
-// 	code?: number
-// 	keyPattern?: Record<string, unknown>
-// 	keyValue?: Record<string, unknown>
-// }
+import { NextResponse } from "next/server";
+import axios from "axios";
+import { API_URL } from "@/constants/url";
 
 export async function GET() {
-	try {
-		const { data } = await axios.get(
-			`${process.env.SCS_SERVER_API_URL}/api/users`,
-		)
+  try {
+    const { data } = await axios.get(`${API_URL}/api/users`);
 
-		return NextResponse.json(data.data, { status: 200 })
-	} catch (error) {
-		console.error(error)
-		return NextResponse.json({ error: 'Failed to get users' }, { status: 500 })
-	}
+    return NextResponse.json(data.data, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Failed to get users" }, { status: 500 });
+  }
 }
 
 // export async function POST(request: Request) {

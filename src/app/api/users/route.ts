@@ -1,49 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { connectDB } from '@/lib/mongoose'
-import User from '@/models/user'
-
-interface MongoError extends Error {
-	code?: number
-	keyPattern?: Record<string, unknown>
-	keyValue?: Record<string, unknown>
-}
+import { API_URL } from "@/constants/url";
+import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-	try {
-		await connectDB()
-		const users = await User.find()
+  try {
+    const { data } = await axios.get(`${API_URL}/api/users`);
 
-		return NextResponse.json(users, { status: 200 })
-	} catch (e) {
-		console.log(e)
-		return NextResponse.json({ error: 'Failed to get users' }, { status: 500 })
-	}
+    console.log(data);
+
+    return NextResponse.json(data.data, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Failed to get users" }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
-	try {
-		const body = await request.json()
-		const { name, email, course } = body
+  try {
+    const body = await request.json();
+    const { name, email, course } = body;
 
-		await connectDB()
+    const newUser = { name, email, course };
 
-		const newUser = await User.create({ name, email, course })
+    const {
+      data: { data, message },
+    } = await axios.post(`${API_URL}/api/users`, newUser);
 
-		return NextResponse.json(newUser, { status: 201 })
-	} catch (e: unknown) {
-		const err = e as MongoError
+    return NextResponse.json({ data, status: 201, message }, { status: 201 });
+  } catch (error: unknown) {
+    console.error(error);
 
-		if (err.code === 11000 && err.keyPattern?.email) {
-			// 이메일 중복
-			return NextResponse.json(
-				{ error: '이미 등록된 이메일입니다.' },
-				{ status: 400 },
-			)
-		}
-
-		return NextResponse.json(
-			{ error: 'Failed to create user' },
-			{ status: 500 },
-		)
-	}
+    return NextResponse.json(
+      { error: "Failed to create user" },
+      { status: 500 }
+    );
+  }
 }

@@ -1,27 +1,27 @@
-import { RegisterFormSchema } from '@/components'
-import { UserType } from '@/models/user'
-import axios from 'axios'
+import axios from "axios";
+import { RegisterFormSchema } from "@/components";
+import { UserType } from "@/models/user";
 
-const API_URL = '/api/users'
+const API_URL = "/api/users";
 
 const fetchUsers = async (): Promise<UserType[]> => {
-	const { data } = await axios.get(API_URL)
+  const { data } = await axios.get(API_URL);
 
-	return data
-}
+  return data;
+};
 
 const createUser = async (values: RegisterFormSchema) => {
-	return await axios.post('/api/users', values)
-}
+  return await axios.post(API_URL, values);
+};
 
 const deleteUser = async ({
-	id,
+  id,
 }: {
-	id: string
+  id: string;
 }): Promise<{ data: { data: UserType; message: string }; status: number }> => {
-	const { data, status } = await axios.delete(`/api/users/${id}`)
+  const { data, status } = await axios.delete(`${API_URL}/${id}`);
 
-	return { data, status }
-}
+  return { data, status };
+};
 
-export { fetchUsers, createUser, deleteUser }
+export { fetchUsers, createUser, deleteUser };
