@@ -1,12 +1,10 @@
-import { API_URL } from "@/constants/url";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import { API_URL } from "@/constants/url";
 
 export async function GET() {
   try {
     const { data } = await axios.get(`${API_URL}/api/users`);
-
-    console.log(data);
 
     return NextResponse.json(data.data, { status: 200 });
   } catch (error) {
@@ -18,10 +16,10 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, course } = body;
-
-    const newUser = { name, email, course };
-
+    const { name, email, course, skills } = body;
+    console.log(skills);
+    const newUser = { name, email, course, skills };
+    console.log(newUser);
     const {
       data: { data, message },
     } = await axios.post(`${API_URL}/api/users`, newUser);

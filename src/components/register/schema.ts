@@ -2,6 +2,15 @@ import { z } from "zod";
 
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
+const skillsSchema = z.object({
+  school: z.boolean(),
+  work: z.boolean(),
+  certificate: z.boolean(),
+  autocad: z.boolean(),
+  autocad_drawing: z.boolean(),
+  modeling: z.boolean(),
+});
+
 const registerFormSchema = z.object({
   course: z.string({
     required_error: "선택해 주세요",
@@ -14,6 +23,7 @@ const registerFormSchema = z.object({
   email: z
     .string({ required_error: "이메일을 입력해 주세요" })
     .email({ message: "이메일 형식이 올바르지 않습니다" }),
+  skills: skillsSchema,
 });
 
 export type { RegisterFormSchema };

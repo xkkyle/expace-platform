@@ -1,24 +1,24 @@
-import { useState } from 'react'
-import useIsMountedRef from './useIsMountedRef'
-import { Loader } from 'lucide-react'
+import React from "react";
+import { Loader } from "lucide-react";
+import useIsMountedRef from "./useIsMountedRef";
 
 const useLoading = () => {
-	const [isLoading, setIsLoading] = useState(false)
-	const ref = useIsMountedRef()
+  const [isLoading, setIsLoading] = React.useState(false);
+  const ref = useIsMountedRef();
 
-	const startTransition = async <T>(promise: Promise<T>): Promise<T> => {
-		try {
-			setIsLoading(true)
-			const data = await promise
-			return data
-		} finally {
-			if (ref.isMounted) {
-				setIsLoading(false)
-			}
-		}
-	}
+  const startTransition = async <T>(promise: Promise<T>): Promise<T> => {
+    try {
+      setIsLoading(true);
+      const data = await promise;
+      return data;
+    } finally {
+      if (ref.isMounted) {
+        setIsLoading(false);
+      }
+    }
+  };
 
-	return { startTransition, isLoading, Loading: Loader }
-}
+  return { startTransition, isLoading, Loading: Loader };
+};
 
-export default useLoading
+export default useLoading;

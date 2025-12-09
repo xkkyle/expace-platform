@@ -226,10 +226,10 @@
   }
 
   .bg-gradient-gray-100 {
-    @apply bg-radial-[at_25%_90%] from-gray-200 via-gray-400 to-blue-100;
+    @apply bg-radial-[at_50%_75%] from-gray-100 via-gray-300 to-gray-50 to-90%;
   }
 
   .bg-gradient-gray-200 {
-    @apply bg-radial-[at_40%_80%] from-gray-300 via-gray-500 to-blue-200;
+    @apply bg-radial-[at_50%_75%] from-gray-200 via-gray-400 to-gray-100 to-90%;
   }
 }

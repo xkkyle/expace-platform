@@ -1,80 +1,80 @@
-'use client'
+"use client";
 
-import React from 'react'
+import React from "react";
 import {
-	Button,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-	Drawer,
-	DrawerContent,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger,
-	RegisterForm,
-} from '@/components'
-import { useMediaQuery } from '@/hooks'
-import screenSize from '@/constants/screenSize'
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  RegisterForm,
+} from "@/components";
+import { useMediaQuery } from "@/hooks";
+import screenSize from "@/constants/screenSize";
 
 function TriggerButton({ open, ...props }: { open: () => void }) {
-	return (
-		<Button
-			type="button"
-			size="icon-lg"
-			onClick={open}
-			className="min-w-[80px]"
-			{...props}
-		>
-			Register
-		</Button>
-	)
+  return (
+    <Button
+      type="button"
+      size="icon-lg"
+      onClick={open}
+      className="min-w-[80px]"
+      {...props}
+    >
+      Register
+    </Button>
+  );
 }
 
 function RegisterBody({ close }: { close: () => void }) {
-	return <RegisterForm inDialog={true} close={close} />
+  return <RegisterForm inDialog={true} close={close} />;
 }
 
 export default function AcademyRegisterDialog() {
-	const isMobile = useMediaQuery(screenSize.MAX_SM)
-	const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const isMobile = useMediaQuery(screenSize.MAX_SM);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
-	const close = () => setIsDialogOpen(false)
+  const close = () => setIsDialogOpen(false);
 
-	return (
-		<>
-			{isMobile ? (
-				<Drawer open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-					<DrawerTrigger asChild>
-						<TriggerButton open={() => setIsDialogOpen(true)} />
-					</DrawerTrigger>
-					<DrawerContent className="">
-						<DrawerHeader className="py-3 text-left">
-							<DrawerTitle className="text-start text-lg">
-								Course Register
-							</DrawerTitle>
-						</DrawerHeader>
-						<div className="px-3">
-							<RegisterBody close={close} />
-						</div>
-					</DrawerContent>
-				</Drawer>
-			) : (
-				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-					<DialogTrigger asChild>
-						<TriggerButton open={() => setIsDialogOpen(true)} />
-					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle className="text-start text-xl">
-								Course Register
-							</DialogTitle>
-						</DialogHeader>
-						<RegisterBody close={close} />
-					</DialogContent>
-				</Dialog>
-			)}
-		</>
-	)
+  return (
+    <>
+      {isMobile ? (
+        <Drawer open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DrawerTrigger asChild>
+            <TriggerButton open={() => setIsDialogOpen(true)} />
+          </DrawerTrigger>
+          <DrawerContent className="">
+            <DrawerHeader className="py-3 text-left">
+              <DrawerTitle className="text-start text-lg">
+                Course Register
+              </DrawerTitle>
+            </DrawerHeader>
+            <div className="px-3">
+              <RegisterBody close={close} />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <TriggerButton open={() => setIsDialogOpen(true)} />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-start text-xl">
+                Course Register
+              </DialogTitle>
+            </DialogHeader>
+            <RegisterBody close={close} />
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
+  );
 }
