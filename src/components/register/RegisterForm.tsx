@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { ArrowRight, Asterisk, Sparkle } from "lucide-react";
+import { Asterisk, Sparkle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
