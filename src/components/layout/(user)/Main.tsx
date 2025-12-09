@@ -1,13 +1,13 @@
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 interface MainProps {
-	children: ReactNode
+  children: ReactNode;
 }
 
 export default function Main({ children }: MainProps) {
-	return (
-		<main className="flex justify-center items-center mt-18 mx-auto w-full text-black bg-white sm:max-w-[800px]">
-			{children}
-		</main>
-	)
+  return (
+    <main className="pt-[57px] mx-auto w-full h-screen text-black bg-white border-l border-r border-r-gray-100 border-l-gray-100 sm:max-w-[800px]">
+      {children}
+    </main>
+  );
 }
