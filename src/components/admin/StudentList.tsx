@@ -13,6 +13,17 @@ interface StudentListProps {
   currentCourse: Course;
 }
 
+const questions = {
+  school: "관련 학과(건축학부, 실내디자인과, 공간디자인학과 등)에 재학 중이다.",
+  work: "건축, 인테리어, 조경, 제품 설계 등에 종사 중이다.",
+  certificate: "실내건축기사/산업기사/기능사 자격증을 미래에 취득할 예정이다.",
+  autocad: "AutoCAD 기본 그리기 / 편집 명령어를 다룰 줄 안다.",
+  autocad_drawing:
+    " AutoCAD를 활용해 원룸 이상의 건축, 인테리어도 도면을 그려본 경험이 있다.",
+  modeling:
+    " Rhinoceros, SketchUp, Revit, C4D 등 3D 모델링 프로그램을 다뤄본 경험이 있다.",
+};
+
 export default function StudentList({ currentCourse }: StudentListProps) {
   const { startTransition, isLoading, Loading } = useLoading();
   const [students, setStudents] = React.useState<UserType[]>([]);
@@ -77,13 +88,31 @@ export default function StudentList({ currentCourse }: StudentListProps) {
                   key={student._id.toString()}
                   className="flex justify-between items-center gap-3 p-3 border border-gray-100 rounded-lg"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="min-w-[50px] sm:min-w-[100px] font-medium">
-                      {student.name}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="min-w-[50px] sm:min-w-[100px]  font-bold">
+                        {student.name}
+                      </div>
+                      <div className="min-w-[50px] sm:min-w-[100px] font-bold">
+                        {student.email}
+                      </div>
                     </div>
-                    <div className="min-w-[50px] sm:min-w-[100px]">
-                      {student.email}
-                    </div>
+                    <ul className="">
+                      {Object.entries(student.skills).map(([name, value]) => (
+                        <li
+                          key={name}
+                          className="flex justify-between items-center gap-6"
+                        >
+                          <span className="">
+                            {questions[name as keyof typeof questions]}
+                          </span>
+
+                          <span className="font-bold">
+                            {value ? "yes" : "no"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <Button
                     type="button"

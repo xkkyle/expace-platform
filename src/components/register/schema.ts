@@ -27,4 +27,4 @@ const registerFormSchema = z.object({
 });
 
 export type { RegisterFormSchema };
-export { registerFormSchema };
+export { registerFormSchema, skillsSchema };

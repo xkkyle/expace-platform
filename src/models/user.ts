@@ -1,3 +1,4 @@
+import { skillsSchema } from "@/components";
 import { z } from "zod";
 
 type UserType = z.infer<typeof userSchema>;
@@ -17,6 +18,7 @@ const userSchema = z.object({
     .email({ message: "이메일 형식이 올바르지 않습니다" }),
   createdAt: z.date(),
   updatedAt: z.date(),
+  skills: skillsSchema,
 });
 
 export type { UserType };
