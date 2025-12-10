@@ -20,7 +20,7 @@ export default function NewsList() {
     },
   );
 
-  const { optimisticMutate, isMutating } = useOptimisticMutate();
+  const { optimisticMutate } = useOptimisticMutate();
   console.log(news);
 
   const remove = async ({ id }: { id: string }) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { Box, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Loading } from "@/components";

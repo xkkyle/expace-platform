@@ -1,5 +1,5 @@
 const getGenericDate = (value: Date | string) => {
-  let _value =
+  const _value =
     typeof value === "string" || value instanceof Date
       ? new Date(value)
       : value;

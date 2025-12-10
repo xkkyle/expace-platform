@@ -5,9 +5,9 @@ const useOptimisticMutate = () => {
   const { mutate } = useSWRConfig();
   const [isMutating, setIsMutating] = React.useState(false);
 
-  const optimisticMutate = async (
+  const optimisticMutate = async <T>(
     key: string,
-    fn: () => Promise<any>,
+    fn: () => Promise<T>,
     options = {},
   ) => {
     setIsMutating(true);
