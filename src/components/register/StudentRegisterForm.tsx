@@ -23,13 +23,15 @@ import {
   Label,
 } from "../ui";
 import { toast } from "sonner";
-import { useLoading } from "@/hooks";
-import { courses } from "@/constants/courses";
-import { registerFormSchema, RegisterFormSchema } from "./schema";
-import { routes } from "@/constants/routes";
+import { Loading } from "@/components";
+import { UserType } from "@/models/user";
 import { createUser } from "@/lib/api";
+import { studentRegisterFormSchema, StudentRegisterFormSchema } from "./schema";
+import { courses } from "@/constants/courses";
+import { routes } from "@/constants/routes";
+import { useOptimisticMutate } from "@/hooks";
 
-export default function RegisterForm({
+export default function StudentRegisterForm({
   inDialog = false,
   close,
 }: {
@@ -38,8 +40,8 @@ export default function RegisterForm({
 }) {
   const router = useRouter();
 
-  const form = useForm<RegisterFormSchema>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<StudentRegisterFormSchema>({
+    resolver: zodResolver(studentRegisterFormSchema),
     mode: "onSubmit",
     defaultValues: {
       course: courses[0],
@@ -56,37 +58,62 @@ export default function RegisterForm({
     },
   });
 
-  const { startTransition, isLoading, Loading } = useLoading();
-
-  const onSubmit = async (values: RegisterFormSchema) => {
+  const { optimisticMutate, isMutating } = useOptimisticMutate();
+  const onSubmit = async (values: StudentRegisterFormSchema) => {
     const today = new Date().toISOString().slice(0, 10);
 
     try {
-      const { status, data } = await startTransition(createUser(values));
-      console.log(values);
-      if (status === 201) {
-        toast.success(`${data?.data.name}님 성공적으로 등록되었습니다`, {
-          description: today,
-        });
+      await optimisticMutate(
+        "/api/users",
+        async (current: UserType[] = []) => {
+          const { status, data } = await createUser(values);
 
-        form.reset();
+          if (status !== 201) {
+            throw new Error("등록 실패");
+          }
 
-        if (inDialog && close) {
-          close();
-        } else {
-          router.push(routes.USER.WIP);
-        }
+          const newUser = data.data;
+
+          return [...current, newUser];
+        },
+        {
+          // optimistic: UI 즉시 반영 (fake user)
+          optimisticData: (current: UserType[] = []) => {
+            const optimisticUser = {
+              ...values,
+              _id: "optimistic-" + Date.now(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+
+            return [...current, optimisticUser];
+          },
+
+          rollbackOnError: true,
+          revalidate: false,
+        },
+      );
+
+      toast.success(`${values.name}님 성공적으로 등록되었습니다`, {
+        description: today,
+      });
+
+      form.reset();
+
+      if (inDialog && close) {
+        close();
+      } else {
+        router.push(routes.USER.WIP);
       }
-    } catch (e: unknown) {
+    } catch (e) {
       console.error(e);
-
       toast.error("⚠️ 문제가 발생하였습니다.");
     }
   };
 
   return (
     <>
-      {isLoading && (
+      {isMutating && (
         <div className="fixed top-0 left-0 bottom-0 right-0 ui-flex-center w-full h-full bg-white opacity-20 z-20">
           <Loading />
         </div>
@@ -355,7 +382,7 @@ export default function RegisterForm({
               size="icon-lg"
               className="w-full font-semibold cursor-pointer"
             >
-              {isLoading ? <Loading className="animate-spin" /> : "등 록"}
+              {isMutating ? <Loading /> : "등 록"}
             </Button>
           </div>
         </form>

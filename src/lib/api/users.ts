@@ -1,16 +1,16 @@
 import axios from "axios";
-import { RegisterFormSchema } from "@/components";
+import { StudentRegisterFormSchema } from "@/components";
 import { UserType } from "@/models/user";
 
 const API_URL = "/api/users";
 
 const fetchUsers = async (): Promise<UserType[]> => {
   const { data } = await axios.get(API_URL);
-  console.log(data.data);
+  console.log(data);
   return data;
 };
 
-const createUser = async (values: RegisterFormSchema) => {
+const createUser = async (values: StudentRegisterFormSchema) => {
   return await axios.post(API_URL, values);
 };
 

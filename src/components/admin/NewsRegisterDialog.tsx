@@ -13,7 +13,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  StudentRegisterForm,
+  NewsRegisterForm,
 } from "@/components";
 import { useMediaQuery } from "@/hooks";
 import screenSize from "@/constants/screenSize";
@@ -33,13 +33,14 @@ function TriggerButton({ open, ...props }: { open: () => void }) {
 }
 
 function RegisterBody({ close }: { close: () => void }) {
-  return <StudentRegisterForm inDialog={true} close={close} />;
+  return <NewsRegisterForm inDialog={true} close={close} />;
 }
 
-export default function AcademyRegisterDialog() {
+export default function NewsRegisterDialog() {
   const isMobile = useMediaQuery(screenSize.MAX_SM);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
+  const title = "뉴스 등록";
   const close = () => setIsDialogOpen(false);
 
   return (
@@ -51,9 +52,7 @@ export default function AcademyRegisterDialog() {
           </DrawerTrigger>
           <DrawerContent className="">
             <DrawerHeader className="py-3 text-left">
-              <DrawerTitle className="text-start text-lg">
-                Course Register
-              </DrawerTitle>
+              <DrawerTitle className="text-start text-lg">{title}</DrawerTitle>
             </DrawerHeader>
             <div className="px-3">
               <RegisterBody close={close} />
@@ -67,9 +66,7 @@ export default function AcademyRegisterDialog() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-start text-xl">
-                Course Register
-              </DialogTitle>
+              <DialogTitle className="text-start text-xl">{title}</DialogTitle>
             </DialogHeader>
             <RegisterBody close={close} />
           </DialogContent>

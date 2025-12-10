@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
+import useSWR, { useSWRConfig } from "swr";
 import { Box, X } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components";
-import { useLoading } from "@/hooks";
+import { Button, Loading } from "@/components";
+import { useOptimisticMutate } from "@/hooks";
 import { deleteUser, fetchUsers } from "@/lib/api";
 import { Course } from "@/constants/courses";
 import { UserType } from "@/models/user";
@@ -25,109 +26,116 @@ const questions = {
 };
 
 export default function StudentList({ currentCourse }: StudentListProps) {
-  const { startTransition, isLoading, Loading } = useLoading();
-  const [students, setStudents] = React.useState<UserType[]>([]);
+  const { data, isLoading } = useSWR("/api/users", fetchUsers, {
+    revalidateOnMount: true,
+  });
 
-  const getUsers = async () => {
-    try {
-      const data = await startTransition(fetchUsers());
+  const { optimisticMutate, isMutating } = useOptimisticMutate();
 
-      setStudents(
-        data.filter((user: UserType) => user.course === currentCourse)
-      );
-    } catch (e) {
-      console.error(e);
-      setStudents([]);
-    }
-  };
+  const students = data?.filter((student) => student.course === currentCourse);
 
   const remove = async ({ id }: { id: string }) => {
     try {
-      const { data, status } = await startTransition(deleteUser({ id }));
+      await optimisticMutate(
+        "/api/users",
+        async (current: UserType[] = []) => {
+          const { status } = await deleteUser({ id });
+          if (status !== 200) throw new Error("삭제 실패");
+          return current;
+        },
+        {
+          optimisticData: (current: UserType[] = []) =>
+            current.filter((u) => u._id.toString() !== id),
 
-      if (status === 200) {
-        setStudents(
-          students.filter((user: UserType) => user._id.toString() !== id)
-        );
-        toast.success(data.message);
-      }
+          // 2) 서버 요청 실패 시 캐시 롤백
+          rollbackOnError: true,
+
+          // 3) 서버 통신 후 데이터 재검증
+          revalidate: true,
+        },
+      );
+
+      toast.success("삭제되었습니다.");
     } catch (e) {
-      if (e instanceof Error) {
-        toast.error(e.message);
-      }
-
-      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Error");
     }
   };
 
-  React.useEffect(() => {
-    getUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCourse]);
-
   return (
-    <div className="min-h-[150px] w-full">
-      {isLoading ? (
-        <div className="ui-flex-center min-h-0 flex-1 h-[50dvh]">
-          <Loading className="animate-spin" size={18} />
-        </div>
-      ) : (
-        <>
-          {students?.length === 0 ? (
-            <div className="ui-flex-center gap-2 min-h-[60dvh] mt-4 w-full bg-gradient-gray-100 font-medium text-lg text-gray-600 rounded-lg">
-              <Box size={18} /> <span>Empty Data</span>
-            </div>
-          ) : (
-            <ul className="flex flex-col gap-3 mt-8 w-full">
-              <li className="flex gap-3 px-3 font-bold">
-                <div className="min-w-[50px] sm:min-w-[100px]">Name</div>
-                <div className="min-w-[50px] sm:min-w-[100px]">Email</div>
-              </li>
-              {students?.map((student) => (
-                <li
-                  key={student._id.toString()}
-                  className="flex justify-between items-center gap-3 p-3 border border-gray-100 rounded-lg"
-                >
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="min-w-[50px] sm:min-w-[100px]  font-bold">
-                        {student.name}
-                      </div>
-                      <div className="min-w-[50px] sm:min-w-[100px] font-bold">
-                        {student.email}
-                      </div>
-                    </div>
-                    <ul className="">
-                      {Object.entries(student.skills).map(([name, value]) => (
-                        <li
-                          key={name}
-                          className="flex justify-between items-center gap-6"
-                        >
-                          <span className="">
-                            {questions[name as keyof typeof questions]}
-                          </span>
-
-                          <span className="font-bold">
-                            {value ? "yes" : "no"}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="secondary"
-                    onClick={() => remove({ id: student._id.toString() })}
-                  >
-                    {isLoading ? <Loading /> : <X />}
-                  </Button>
+    <div className="pb-3 min-h-[150px] w-full">
+      <>
+        {isLoading || isMutating ? (
+          <div className="ui-flex-center min-h-0 flex-1 h-[60dvh]">
+            <Loading />
+          </div>
+        ) : (
+          <>
+            {students?.length === 0 ? (
+              <div className="ui-flex-center gap-2 min-h-[60dvh] mt-4 w-full bg-gradient-gray-100 font-medium text-lg text-gray-600 rounded-lg">
+                <Box size={18} /> <span>Empty Data</span>
+              </div>
+            ) : (
+              <ul className="flex flex-col gap-3 mt-3 w-full">
+                <li className="flex gap-3 py-1.5 px-3 font-bold border border-gray-100 rounded-lg">
+                  <div className="min-w-[50px] sm:min-w-[100px]">Name</div>
+                  <div className="min-w-[50px] sm:min-w-[100px]">Email</div>
                 </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
+                {students?.map(({ _id, name, email, skills }) => (
+                  <li
+                    key={_id.toString()}
+                    className={`relative flex flex-col gap-3 p-3 border border-gray-100 rounded-lg`}
+                  >
+                    <div className="col-span-2 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="min-w-[50px] sm:min-w-[100px]  font-bold">
+                          {name}
+                        </div>
+                        <div className="min-w-[50px] sm:min-w-[100px] font-bold">
+                          {email}
+                        </div>
+                      </div>
+                      <ul className="flex flex-col gap-2 w-full">
+                        {Object.entries(skills).map(([name, value], idx) => (
+                          <li
+                            key={name}
+                            className="flex justify-between items-center gap-6"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex justify-center items-center w-4 h-4 text-sm text-gray-600 border border-gray-300 rounded-full min-w-4">
+                                {idx + 1}
+                              </span>
+                              <span
+                                className={`${value ? "font-semibold underline" : "text-gray-600 font-normal"}`}
+                              >
+                                {questions[name as keyof typeof questions]}
+                              </span>
+                            </div>
+                            <span
+                              className={`${value ? "text-black font-bold " : "text-gray-600 font-normal"}`}
+                            >
+                              {value ? "yes" : "no"}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="absolute top-2 right-2 flex justify-end ">
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="secondary"
+                        onClick={() => remove({ id: _id.toString() })}
+                      >
+                        {isLoading ? <Loading /> : <X />}
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
+      </>
     </div>
   );
 }

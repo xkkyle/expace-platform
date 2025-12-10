@@ -1,42 +1,39 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { API_URL } from "@/constants/url";
 
 export async function GET() {
   try {
-    const { data } = await axios.get(`${API_URL}/api/users`);
-
+    const { data } = await axios.get(`${API_URL}/api/news`);
+    console.log(data);
     return NextResponse.json(data.data, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to get users" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to get news list" },
+      { status: 500 },
+    );
   }
 }
 
-// export async function POST(request: Request) {
-// 	try {
-// 		const body = await request.json()
-// 		const { name, email, course } = body
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { title, link } = body;
 
-// 		await connectDB()
+    const news = { title, link };
 
-// 		const newUser = await User.create({ name, email, course })
+    const {
+      data: { data, message },
+    } = await axios.post(`${API_URL}/api/news`, news);
 
-// 		return NextResponse.json(newUser, { status: 201 })
-// 	} catch (e: unknown) {
-// 		const err = e as MongoError
+    return NextResponse.json({ data, status: 201, message }, { status: 201 });
+  } catch (error: unknown) {
+    console.error(error);
 
-// 		if (err.code === 11000 && err.keyPattern?.email) {
-// 			// 이메일 중복
-// 			return NextResponse.json(
-// 				{ error: '이미 등록된 이메일입니다.' },
-// 				{ status: 400 },
-// 			)
-// 		}
-
-// 		return NextResponse.json(
-// 			{ error: 'Failed to create user' },
-// 			{ status: 500 },
-// 		)
-// 	}
-// }
+    return NextResponse.json(
+      { error: "Failed to create user" },
+      { status: 500 },
+    );
+  }
+}

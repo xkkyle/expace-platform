@@ -1,9 +1,9 @@
-import RegisterForm from "@/components/register/RegisterForm";
+import { StudentRegisterForm } from "@/components";
 
 export default async function RegisterPage() {
   return (
     <section className="flex justify-center items-center mx-auto px-3">
-      <RegisterForm />
+      <StudentRegisterForm />
     </section>
   );
 }

@@ -28,14 +28,13 @@ export default function Aside() {
         className={`fixed flex-col left-0 hidden py-2 h-full w-14 max-h-screen overflow-y-auto overflow-x-hidden border-muted border-r md:sticky md:flex lg:w-56 lg:p-3`}
       >
         <div className="flex h-full flex-col justify-between gap-2 lg:gap-4">
-          <header className="flex justify-center items-center min-h-[36px] lg:justify-between">
-            <h1 className="inline-flex justify-center item-center py-1.5 px-2 rounded-lg transition-colors hover:bg-gray-100">
+          <header className="flex justify-center items-center min-h-9 lg:justify-between">
+            <h1 className="inline-flex justify-center item-center rounded-lg transition-colors hover:bg-gray-100">
               <Link
                 href={routes.ADMIN.ROOT}
-                className="inline-flex justify-center items-center gap-1 text-lg font-black font-mono text-center"
+                className="flex justify-center items-center gap-1 py-1.5 px-2 w-full h-full text-lg font-black font-mono text-center"
               >
-                <Sparkle size={18} />
-                <span className="hidden lg:inline">ex.</span>
+                <Sparkle size={21} className="rotate-45" />
               </Link>
             </h1>
             <Button
@@ -52,7 +51,7 @@ export default function Aside() {
               <Link
                 href={to}
                 key={to}
-                className={`ui-flex-center gap-0 py-1.5 px-2 min-h-[36px] ${
+                className={`ui-flex-center gap-0 py-1.5 px-2 min-h-9 ${
                   to === routes.ADMIN.ROOT + segment ? "bg-muted" : "bg-white"
                 } text-gray-800 font-medium rounded-md hover:bg-muted active:bg-gray-200 transition-colors lg:gap-2 lg:justify-between`}
               >

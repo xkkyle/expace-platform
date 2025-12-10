@@ -5,7 +5,6 @@ import { API_URL } from "@/constants/url";
 export async function GET() {
   try {
     const { data } = await axios.get(`${API_URL}/api/users`);
-
     return NextResponse.json(data.data, { status: 200 });
   } catch (error) {
     console.error(error);
@@ -17,12 +16,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, course, skills } = body;
-    console.log(skills);
-    const newUser = { name, email, course, skills };
-    console.log(newUser);
+
     const {
       data: { data, message },
-    } = await axios.post(`${API_URL}/api/users`, newUser);
+    } = await axios.post(`${API_URL}/api/users`, {
+      name,
+      email,
+      course,
+      skills,
+    });
 
     return NextResponse.json({ data, status: 201, message }, { status: 201 });
   } catch (error: unknown) {
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: "Failed to create user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

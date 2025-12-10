@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-type RegisterFormSchema = z.infer<typeof registerFormSchema>;
+type StudentRegisterFormSchema = z.infer<typeof studentRegisterFormSchema>;
+
+type NewsRegisterFormSchema = z.infer<typeof newsRegisterFormSchema>;
 
 const skillsSchema = z.object({
   school: z.boolean(),
@@ -11,7 +13,7 @@ const skillsSchema = z.object({
   modeling: z.boolean(),
 });
 
-const registerFormSchema = z.object({
+const studentRegisterFormSchema = z.object({
   course: z.string({
     required_error: "선택해 주세요",
   }),
@@ -26,5 +28,14 @@ const registerFormSchema = z.object({
   skills: skillsSchema,
 });
 
-export type { RegisterFormSchema };
-export { registerFormSchema, skillsSchema };
+const newsRegisterFormSchema = z.object({
+  title: z.string({
+    required_error: "제목을 입력해 주세요",
+  }),
+  link: z.string().regex(/^https:\/\/.+$/, {
+    message: "https://로 시작하는 URL만 입력 가능합니다",
+  }),
+});
+
+export type { NewsRegisterFormSchema, StudentRegisterFormSchema };
+export { studentRegisterFormSchema, skillsSchema, newsRegisterFormSchema };
