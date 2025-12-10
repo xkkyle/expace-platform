@@ -32,7 +32,7 @@ export default function Home() {
                 <DialogTitle className="text-start text-lg">
                   AutoCAD Class
                 </DialogTitle>
-                <div className="overflow-y-scroll">
+                <div className="overflow-y-scroll ">
                   <ImageGridContainer
                     images={[autocad1, autocad2, autocad3, autocad4]}
                   />
