@@ -1,4 +1,4 @@
-# WSketch Beta
+# Expace Platform
 
 > The platform is for students who will participate in a SketchUp class.
 
