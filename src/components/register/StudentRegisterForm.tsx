@@ -283,8 +283,8 @@ export default function StudentRegisterForm({
                             htmlFor="certificate"
                             className="cursor-pointer"
                           >
-                            실내건축기사/산업기사/기능사 자격증을 미래에 취득할
-                            예정이다.
+                            실내건축기사/산업기사/기능사, 전산응용건축제도기능사
+                            자격증을 미래에 취득할 예정이다.
                           </FormLabel>
                         </FormItem>
                       )}
@@ -335,7 +335,7 @@ export default function StudentRegisterForm({
                             className="cursor-pointer"
                           >
                             AutoCAD를 활용해 원룸 이상의 건축, 인테리어도 도면을
-                            그려본 경험이 있다.
+                            그려본 경험이 있다. (도면을 보고 설명할 수 있다)
                           </FormLabel>
                         </FormItem>
                       )}
