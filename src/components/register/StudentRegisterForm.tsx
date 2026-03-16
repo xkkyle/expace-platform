@@ -162,7 +162,7 @@ export default function StudentRegisterForm({
                           <SelectValue placeholder="코스 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="h-[320px] overflow-y-auto">
                         {courses.map((course) => (
                           <SelectItem
                             key={course}

@@ -1,6 +1,7 @@
 type Course = (typeof courses)[number];
 
 const courses = [
+  "2026.03 _ AutoCAD2",
   "2026.02 _ AutoCAD1",
   "2026.01 _ AutoCAD2",
   "2025.12 _ AutoCAD1",
